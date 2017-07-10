@@ -14,6 +14,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/VirsualDevice;Component/VirsualStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="bconverter"/>
             <ControlTemplate x:Key="TextBoxBaseControlTemplate" TargetType="{x:Type TextBoxBase}">
                 <Border x:Name="Bd" CornerRadius="5" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
                     <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -32,7 +33,7 @@
                 </Border>
             </ControlTemplate>
             <ControlTemplate x:Key="TextBoxControlTemplate" TargetType="{x:Type TextBoxBase}">
-                <Border x:Name="Bd" CornerRadius="3" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}"  SnapsToDevicePixels="True">
+                <Border x:Name="Bd" CornerRadius="3" BorderBrush="DimGray" BorderThickness="1" Background="{TemplateBinding Background}"  SnapsToDevicePixels="True">
                     <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                 </Border>
                 <ControlTemplate.Triggers>
@@ -62,12 +63,35 @@
             </RichTextBox>
         </GroupBox>
         <GroupBox Grid.Row="0" BorderBrush="DimGray" Header="自动应答" Margin="5" BorderThickness="1" Grid.Column="2">
-            <DataGrid>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="问句" Width="*"/>
-                    <DataGridTextColumn Header="回复" Width="*"/>
-                </DataGrid.Columns>
-            </DataGrid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <DataGrid ItemsSource="{Binding Data.Responses,Mode=TwoWay}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False" Grid.Row="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="问句" Width="*" Binding="{Binding Ask}"/>
+                        <DataGridTextColumn Header="回复" Width="*" Binding="{Binding Answer}"/>
+                        <DataGridTemplateColumn Header="删除" Width="auto" x:Name="clnDel">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="X" Foreground="Red" Click="Button_Click_1"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="txtAsk" Grid.Column="0" Template="{DynamicResource TextBoxControlTemplate}"/>
+                    <TextBox x:Name="txtAnswer" Grid.Column="1" Template="{DynamicResource TextBoxControlTemplate}"/>
+                    <Button x:Name="btnAddAutoRes" Click="btnAddAutoRes_Click" Content="+" Grid.Column="2" Width="{Binding ActualWidth,ElementName=clnDel}" Foreground="Green"/>
+                </Grid>
+            </Grid>
         </GroupBox>
         <GroupBox Header="端口参数" Grid.Row="1" Grid.Column="0" BorderBrush="DimGray" Margin="5" BorderThickness="1">
             <UniformGrid x:Name="ugd" Columns="2" Rows="7" Margin="5">
@@ -120,31 +144,133 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*" x:Name="row"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <ItemsControl Grid.Row="0" Grid.ColumnSpan="4" ItemsSource="{Binding Funcs,Mode=TwoWay}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal">
-                            </WrapPanel>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button x:Name="btn" Content="{Binding Content}" Tag="{Binding Command}" Click="btnCommand_Click" ToolTip="{Binding Command}" Margin="5,0">
-                                <Button.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="移除" Click="MenuItem_Click" Tag="{Binding Command, ElementName=btn}"/>
-                                    </ContextMenu>
-                                </Button.ContextMenu>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                <TextBox x:Name="txtSend" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Template="{DynamicResource TextBoxControlTemplate}"/>
-                <Button x:Name="btnSend" Content="发送" Grid.Row="1" Grid.Column="3" Click="btnSend_Click" IsEnabled="{Binding IsEnabled,ElementName=btnClose}"/>
+                <ScrollViewer Grid.Row="0" Grid.ColumnSpan="4" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Data.Funcs,Mode=TwoWay}" Background="White">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal">
+                                </WrapPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button x:Name="btn" Content="{Binding Content}" Tag="{Binding Command}" Click="btnCommand_Click" ToolTip="{Binding Command}" Margin="5">
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+                <ScrollViewer Visibility="{Binding IsChecked,ElementName=btnEdit,Converter={StaticResource bconverter}}" Grid.Row="0" Grid.ColumnSpan="4" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl Visibility="{Binding IsChecked,ElementName=btnEdit,Converter={StaticResource bconverter}}" ItemsSource="{Binding Data.Funcs,Mode=TwoWay}" Background="White" >
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal">
+                                </WrapPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="DimGray" BorderThickness="1" CornerRadius="3" Margin="5">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBox Text="{Binding Content}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="0"/>
+                                        <TextBox Text="{Binding Command}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="1"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <ScrollViewer Visibility="{Binding IsChecked,ElementName=btnDel,Converter={StaticResource bconverter}}" Grid.Row="0" Grid.ColumnSpan="4" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl Visibility="{Binding IsChecked,ElementName=btnDel,Converter={StaticResource bconverter}}" ItemsSource="{Binding Data.Funcs,Mode=TwoWay}" Background="White" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal">
+                                </WrapPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button BorderBrush="DimGray" BorderThickness="1" Margin="5" x:Name="btndel" Click="btndel_Click">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="{Binding Content,StringFormat=功能名称:{0}}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0"/>
+                                        <TextBlock Text="{Binding Command,StringFormat=命令:{0}}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+                                        <Path Data="M0,0 L1,1 M1,0L0,1" Stretch="Fill" MaxWidth="50" MaxHeight="30" HorizontalAlignment="Center" VerticalAlignment="Center" Stroke="Red" StrokeThickness="2" Grid.RowSpan="2"/>
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <Border Grid.Row="1" Grid.ColumnSpan="4" CornerRadius="2" BorderBrush="DimGray" BorderThickness="1" Padding="1">
+                    <UniformGrid Columns="7" >
+                        <UniformGrid.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                            </Style>
+                        </UniformGrid.Resources>
+                        <TextBlock Text="功能名称:"/>
+                        <TextBox x:Name="txtContent" Template="{DynamicResource TextBoxControlTemplate}"/>
+                        <TextBlock Text="命令:"/>
+                        <TextBox x:Name="txtCommand" Template="{DynamicResource TextBoxControlTemplate}"/>
+                        <Button Content="添加" x:Name="btnAdd" Click="btnAdd_Click">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked,ElementName=btnEdit}" Value="true">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsChecked,ElementName=btnDel}" Value="true">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <ToggleButton Content="编辑" x:Name="btnEdit">
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked,ElementName=btnDel}" Value="true">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                        <ToggleButton Content="删除" x:Name="btnDel">
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked,ElementName=btnEdit}" Value="true">
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                    </UniformGrid>
+                </Border>
+                <TextBox x:Name="txtSend" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Template="{DynamicResource TextBoxControlTemplate}"/>
+                <Button x:Name="btnSend" Content="发送" Grid.Row="2" Grid.Column="3" Click="btnSend_Click" IsEnabled="{Binding IsEnabled,ElementName=btnClose}"/>
             </Grid>
         </GroupBox>
     </Grid>

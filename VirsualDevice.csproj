@@ -58,9 +58,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AutoResponse.cs" />
     <Compile Include="Function.cs" />
     <Compile Include="LogControl.cs" />
     <Compile Include="SerialHelper.cs" />
+    <Compile Include="VirsualData.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

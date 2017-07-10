@@ -125,39 +125,75 @@ namespace VirsualDevice
         }
 
 
+        ///// <summary>
+        ///// 功能命令集合
+        ///// </summary>
+        //private ObservableCollection<Function> _funcs = new ObservableCollection<Function>();
+        //[XmlArray(ElementName = "功能集合")]
+        //public ObservableCollection<Function> Funcs
+        //{
+        //    get
+        //    {
+        //        return _funcs;
+        //    }
+        //    set
+        //    {
+        //        if (_funcs == value)
+        //        {
+        //            return;
+        //        }
+        //        _funcs = value;
+        //        Notify("Funcs");
+        //    }
+        //}
+        ///// <summary>
+        ///// 功能命令集合
+        ///// </summary>
+        //private ObservableCollection<AutoResponse> _responses = new ObservableCollection<AutoResponse>()
+        //{
+        //    new AutoResponse() {Ask="asdfasdf",Answer="asdfjsdf" },
+        //};
+        //[XmlArray(ElementName = "自动回复集合")]
+        //public ObservableCollection<AutoResponse> Responses
+        //{
+        //    get
+        //    {
+        //        return _responses;
+        //    }
+        //    set
+        //    {
+        //        if (_responses == value)
+        //        {
+        //            return;
+        //        }
+        //        _responses = value;
+        //        Notify("Responses");
+        //    }
+        //}
+        private VirsualData _data = new VirsualData();
         /// <summary>
-        /// 功能命令集合
+        /// 数据位
         /// </summary>
-        private ObservableCollection<Function> _funcs = new ObservableCollection<Function>()
-            {
-                new Function(){Content="你好",Command="Hello"},
-            };
-        [XmlArray(ElementName = "功能集合")]
-        public ObservableCollection<Function> Funcs
+        public VirsualData Data
         {
             get
             {
-                return _funcs;
+                return _data;
             }
             set
             {
-                if (_funcs == value)
-                {
-                    return;
-                }
-                _funcs = value;
-                Notify("Funcs");
+                _data = value;
+                Notify("Data");
             }
         }
-
         #endregion
 
         public MainWindow()
         {
             InitializeComponent();
             this.DataContext = this;
-            this.Loaded += delegate { Funcs = SerialHelper.LoadFromFile<ObservableCollection<Function>>("D:\\VirsualData.xml"); };
-            this.Closing += delegate { ClosePort(); SerialHelper.SaveToFile(Funcs, "D:\\VirsualData.xml"); };
+            this.Loaded += delegate { Data = SerialHelper.LoadFromFile<VirsualData>("D:\\VirsualData.xml"); };
+            this.Closing += delegate { ClosePort(); SerialHelper.SaveToFile(Data, "D:\\VirsualData.xml"); };
         }
 
 
@@ -183,7 +219,63 @@ namespace VirsualDevice
             if (_continue)
                 Write(this.txtSend.Text);
         }
+        private void btnCommand_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button btn = (sender as Button);
+                if (!string.IsNullOrEmpty(btn.Tag.ToString()) && _continue)
+                {
+                    Write(btn.Tag.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                LogMessage(ex.Message, FlowDirection.RightToLeft);
+            }
+        }
 
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtContent.Text) || string.IsNullOrEmpty(txtCommand.Text))
+            {
+                return;
+            }
+            Data.Funcs.Add(new Function() { Content = txtContent.Text, Command = txtCommand.Text });
+            txtCommand.Text = "";
+            txtContent.Text = "";
+        }
+
+        private void btndel_Click(object sender, RoutedEventArgs e)
+        {
+            Button btn = sender as Button;
+            Function fun = btn.DataContext as Function;
+            if (fun != null && MessageBox.Show("确实要删除该功能按钮吗？", "询问", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                Data.Funcs.Remove(fun);
+            }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            Button btn = sender as Button;
+            AutoResponse res = btn.DataContext as AutoResponse;
+            if (res != null)
+            {
+                Data.Responses.Remove(res);
+            }
+        }
+
+        private void btnAddAutoRes_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtAsk.Text) || string.IsNullOrEmpty(txtAnswer.Text))
+            {
+                return;
+            }
+            Data.Responses.Add(new AutoResponse() { Ask = txtAsk.Text, Answer = txtAnswer.Text });
+            txtAnswer.Text = "";
+            txtAsk.Text = "";
+        }
         #region 方法
         /// <summary>
         /// 打开端口
@@ -241,8 +333,8 @@ namespace VirsualDevice
                     string message = _serialPort.ReadLine();
                     Dispatcher.Invoke(new Action(() =>
                     {
-                        AutoResponseMessage(message);
                         LogMessage(message, FlowDirection.LeftToRight);
+                        AutoResponseMessage(message);
                     }));
 
                 }
@@ -288,7 +380,11 @@ namespace VirsualDevice
         /// <param name="message"></param>
         private void AutoResponseMessage(string message)
         {
-
+            AutoResponse res = Data.Responses.FirstOrDefault(a => a.Ask == message);
+            if (res != null)
+            {
+                Write(res.Answer);
+            }
         }
 
         #endregion
@@ -304,28 +400,8 @@ namespace VirsualDevice
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
         #endregion
 
-        private void btnCommand_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Button btn = (sender as Button);
-                if (!string.IsNullOrEmpty(btn.Tag.ToString()) && _continue)
-                {
-                    Write(btn.Tag.ToString());
-                }
-            }
-            catch (Exception ex)
-            {
-                LogMessage(ex.Message, FlowDirection.RightToLeft);
-            }
-        }
-
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            MenuItem it = sender as MenuItem;
-            object ob = it.Tag;
-        }
     }
 }
