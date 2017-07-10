@@ -125,18 +125,26 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <ItemsControl Grid.Row="0" Grid.ColumnSpan="4" ItemsSource="{Binding Funcs,Mode=TwoWay}">
-                    <!--<ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal">
-                        </WrapPanel>
-                    </ItemsPanelTemplate>-->
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal">
+                            </WrapPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Content="{Binding Content}" Tag="{Binding Command}" Click="btnCommand_Click"/>
+                            <Button x:Name="btn" Content="{Binding Content}" Tag="{Binding Command}" Click="btnCommand_Click" ToolTip="{Binding Command}" Margin="5,0">
+                                <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="移除" Click="MenuItem_Click" Tag="{Binding Command, ElementName=btn}"/>
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                            </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <TextBox x:Name="txtSend" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Template="{DynamicResource TextBoxControlTemplate}"/>
-                <Button x:Name="btnSend" Content="发送" Grid.Row="1" Grid.Column="3" Click="btnSend_Click"/>
+                <Button x:Name="btnSend" Content="发送" Grid.Row="1" Grid.Column="3" Click="btnSend_Click" IsEnabled="{Binding IsEnabled,ElementName=btnClose}"/>
             </Grid>
         </GroupBox>
     </Grid>

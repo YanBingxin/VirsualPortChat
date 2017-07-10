@@ -321,5 +321,11 @@ namespace VirsualDevice
                 LogMessage(ex.Message, FlowDirection.RightToLeft);
             }
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem it = sender as MenuItem;
+            object ob = it.Tag;
+        }
     }
 }
