@@ -1,0 +1,16 @@
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\MainWindow.g.cs
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\App.g.cs
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\VirsualDevice_MarkupCompile.cache
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\VirsualDevice_MarkupCompile.lref
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\MainWindow.baml
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\VirsualDevice.exe
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\VirsualDevice.pdb
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\VirsualStyle.baml
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\VirsualDevice.g.resources
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\VirsualDevice.Properties.Resources.resources
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\VirsualDevice.csproj.GenerateResource.Cache
+C:\Users\Administrator\Desktop\VirsualDevice\VirsualDevice.exe.config
+C:\Users\Administrator\Desktop\VirsualDevice\VirsualDevice.exe
+C:\Users\Administrator\Desktop\VirsualDevice\VirsualDevice.pdb
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\VirsualDevice.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\GeneratedInternalTypeHelper.g.cs
