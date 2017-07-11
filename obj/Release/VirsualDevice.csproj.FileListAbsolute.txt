@@ -1,0 +1,15 @@
+C:\Users\YanBingxin\Desktop\VirsualDevice.exe.config
+C:\Users\YanBingxin\Desktop\VirsualDevice.exe
+C:\Users\YanBingxin\Desktop\VirsualDevice.pdb
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\MainWindow.g.cs
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\App.g.cs
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\GeneratedInternalTypeHelper.g.cs
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\VirsualDevice_MarkupCompile.cache
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\VirsualDevice_MarkupCompile.lref
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\MainWindow.baml
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\VirsualStyle.baml
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\VirsualDevice.g.resources
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\VirsualDevice.Properties.Resources.resources
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\VirsualDevice.csproj.GenerateResource.Cache
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\VirsualDevice.exe
+C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\VirsualDevice.pdb

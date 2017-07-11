@@ -68,14 +68,24 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <DataGrid ItemsSource="{Binding Data.Responses,Mode=TwoWay}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False" Grid.Row="0">
+                <DataGrid Margin="0,0,0,1" ItemsSource="{Binding Data.Responses,Mode=TwoWay}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" CanUserDeleteRows="False" Grid.Row="0">
+                    <DataGrid.Resources>
+                        <Style x:Key="EleStyle" TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Bottom"/>
+                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        </Style>
+                        <Style x:Key="EleingStyle" TargetType="TextBox">
+                            <Setter Property="VerticalAlignment" Value="Bottom"/>
+                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        </Style>
+                    </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="问句" Width="*" Binding="{Binding Ask}"/>
-                        <DataGridTextColumn Header="回复" Width="*" Binding="{Binding Answer}"/>
+                        <DataGridTextColumn x:Name="clnAsk" Header="问句" Width="*" Binding="{Binding Ask}" ElementStyle="{StaticResource EleStyle}" EditingElementStyle="{StaticResource EleingStyle}"/>
+                        <DataGridTextColumn x:Name="clnAnswer" Header="回复" Width="*" Binding="{Binding Answer}" ElementStyle="{StaticResource EleStyle}"  EditingElementStyle="{StaticResource EleingStyle}"/>
                         <DataGridTemplateColumn Header="删除" Width="auto" x:Name="clnDel">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="X" Foreground="Red" Click="Button_Click_1"/>
+                                    <Button Content="X" Foreground="Red" Click="Button_Click_1" Height="18" FontSize="9" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -83,12 +93,12 @@
                 </DataGrid>
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="txtAsk" Grid.Column="0" Template="{DynamicResource TextBoxControlTemplate}"/>
-                    <TextBox x:Name="txtAnswer" Grid.Column="1" Template="{DynamicResource TextBoxControlTemplate}"/>
+                    <TextBox x:Name="txtAsk" Grid.Column="0" Template="{DynamicResource TextBoxControlTemplate}" Width="{Binding ActualWidth,ElementName=clnAsk}"/>
+                    <TextBox x:Name="txtAnswer" Grid.Column="1" Template="{DynamicResource TextBoxControlTemplate}" Width="{Binding ActualWidth,ElementName=clnAnswer}"/>
                     <Button x:Name="btnAddAutoRes" Click="btnAddAutoRes_Click" Content="+" Grid.Column="2" Width="{Binding ActualWidth,ElementName=clnDel}" Foreground="Green"/>
                 </Grid>
             </Grid>
@@ -158,7 +168,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button x:Name="btn" Content="{Binding Content}" Tag="{Binding Command}" Click="btnCommand_Click" ToolTip="{Binding Command}" Margin="5">
+                                <Button x:Name="btn" Content="{Binding Content}" Tag="{Binding Command}" Click="btnCommand_Click" ToolTip="{Binding Command}" Margin="5" MinWidth="40">
                                 </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -174,7 +184,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border BorderBrush="DimGray" BorderThickness="1" CornerRadius="3" Margin="5">
+                                <Border BorderBrush="DimGray" BorderThickness="1" CornerRadius="3" Margin="5" MinWidth="40">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition/>
@@ -205,7 +215,7 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Text="{Binding Content,StringFormat=功能名称:{0}}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0"/>
+                                        <TextBlock Text="{Binding Content,StringFormat=名称:{0}}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0"/>
                                         <TextBlock Text="{Binding Command,StringFormat=命令:{0}}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
                                         <Path Data="M0,0 L1,1 M1,0L0,1" Stretch="Fill" MaxWidth="50" MaxHeight="30" HorizontalAlignment="Center" VerticalAlignment="Center" Stroke="Red" StrokeThickness="2" Grid.RowSpan="2"/>
                                     </Grid>

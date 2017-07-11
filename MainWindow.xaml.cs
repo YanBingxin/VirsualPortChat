@@ -192,8 +192,8 @@ namespace VirsualDevice
         {
             InitializeComponent();
             this.DataContext = this;
-            this.Loaded += delegate { Data = SerialHelper.LoadFromFile<VirsualData>("D:\\VirsualData.xml"); };
-            this.Closing += delegate { ClosePort(); SerialHelper.SaveToFile(Data, "D:\\VirsualData.xml"); };
+            this.Loaded += delegate { Data = SerialHelper.LoadFromFile<VirsualData>("VirsualData.xml"); };
+            this.Closing += delegate { ClosePort(); SerialHelper.SaveToFile(Data, "VirsualData.xml"); };
         }
 
 
@@ -239,6 +239,12 @@ namespace VirsualDevice
         {
             if (string.IsNullOrEmpty(txtContent.Text) || string.IsNullOrEmpty(txtCommand.Text))
             {
+                MessageBox.Show("功能名称|命令均不能为空");
+                return;
+            }
+            if (Data.Funcs.FirstOrDefault(f => f.Content == txtContent.Text && f.Command == txtCommand.Text) != null)
+            {
+                MessageBox.Show("已存在相同的项");
                 return;
             }
             Data.Funcs.Add(new Function() { Content = txtContent.Text, Command = txtCommand.Text });
@@ -270,6 +276,12 @@ namespace VirsualDevice
         {
             if (string.IsNullOrEmpty(txtAsk.Text) || string.IsNullOrEmpty(txtAnswer.Text))
             {
+                MessageBox.Show("问句|答复均不能为空");
+                return;
+            }
+            if (Data.Responses.FirstOrDefault(r => r.Ask == txtAsk.Text) != null)
+            {
+                MessageBox.Show("列表中已存在与该问句相同的项");
                 return;
             }
             Data.Responses.Add(new AutoResponse() { Ask = txtAsk.Text, Answer = txtAnswer.Text });

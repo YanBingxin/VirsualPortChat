@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>XmlToSchema.ico</ApplicationIcon>
+    <ApplicationIcon>P2P.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework.Aero" />
@@ -108,7 +108,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="XmlToSchema.ico" />
+    <Resource Include="P2P.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

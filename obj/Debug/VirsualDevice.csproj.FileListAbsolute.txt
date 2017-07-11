@@ -12,7 +12,6 @@ C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\VirsualDevice.csproj.Gene
 C:\Users\Administrator\Desktop\VirsualDevice\VirsualDevice.exe.config
 C:\Users\Administrator\Desktop\VirsualDevice\VirsualDevice.exe
 C:\Users\Administrator\Desktop\VirsualDevice\VirsualDevice.pdb
-C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\VirsualDevice.csprojResolveAssemblyReference.cache
 C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\Administrator\Documents\GitHub\VirsualPortChat\VirsualDevice.exe.config
 C:\Users\Administrator\Documents\GitHub\VirsualPortChat\obj\Debug\VirsualDevice.exe
