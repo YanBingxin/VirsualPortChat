@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Administrator\Desktop\VirsualDevice\obj\Release\
+C:\Users\Administrator\Desktop\VirsualPortChat\obj\Release\
 VirsualDevice
 none
 false
 TRACE
-C:\Users\Administrator\Desktop\VirsualDevice\App.xaml
+C:\Users\Administrator\Desktop\VirsualPortChat\App.xaml
 21227631594
 
 11-782024819
 13976485994
 MainWindow.xaml;VirsualStyle.xaml;
 
-False
+True
 

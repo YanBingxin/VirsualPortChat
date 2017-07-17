@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<VirsualData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <功能集合>
+    <Function>
+      <功能名称>a</功能名称>
+      <命令>01 02 03 0f;20;0;0;500</命令>
+    </Function>
+  </功能集合>
+  <自动回复集合>
+    <AutoResponse>
+      <问句>01 02 03 04 00 05 06 08 09 10</问句>
+      <答复>a</答复>
+    </AutoResponse>
+    <AutoResponse>
+      <问句>0A</问句>
+      <答复>0B</答复>
+    </AutoResponse>
+  </自动回复集合>
+</VirsualData>

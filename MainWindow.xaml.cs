@@ -36,6 +36,31 @@ namespace VirsualDevice
         #endregion
 
         #region 属性
+
+        /// <summary>
+        /// 属性
+        /// </summary>
+        private int _encodingIndex = 0;
+        /// <summary>
+        /// 获取或设置属性
+        /// </summary>
+        public int EncodingIndex
+        {
+            get
+            {
+                return _encodingIndex;
+            }
+            set
+            {
+                if (_encodingIndex == value)
+                {
+                    return;
+                }
+                _encodingIndex = value;
+                Notify("EncodingIndex");
+            }
+        }
+
         private int _baudRate = 9600;
         /// <summary>
         /// 波特率
@@ -78,19 +103,14 @@ namespace VirsualDevice
                 return SerialPort.GetPortNames().ToList();
             }
         }
-        public List<Encoding> Encodings
+        public List<string> Encodings
         {
             get
             {
-                return new List<Encoding>()
+                return new List<string>()
                 {
-                    Encoding.ASCII,
-                    Encoding.BigEndianUnicode,
-                    Encoding.Default,
-                    Encoding.Unicode,
-                    Encoding.UTF32,
-                    Encoding.UTF7,
-                    Encoding.UTF8,
+                    "ASCII",
+                    "BYTE",
                 };
             }
         }
@@ -124,52 +144,6 @@ namespace VirsualDevice
             }
         }
 
-
-        ///// <summary>
-        ///// 功能命令集合
-        ///// </summary>
-        //private ObservableCollection<Function> _funcs = new ObservableCollection<Function>();
-        //[XmlArray(ElementName = "功能集合")]
-        //public ObservableCollection<Function> Funcs
-        //{
-        //    get
-        //    {
-        //        return _funcs;
-        //    }
-        //    set
-        //    {
-        //        if (_funcs == value)
-        //        {
-        //            return;
-        //        }
-        //        _funcs = value;
-        //        Notify("Funcs");
-        //    }
-        //}
-        ///// <summary>
-        ///// 功能命令集合
-        ///// </summary>
-        //private ObservableCollection<AutoResponse> _responses = new ObservableCollection<AutoResponse>()
-        //{
-        //    new AutoResponse() {Ask="asdfasdf",Answer="asdfjsdf" },
-        //};
-        //[XmlArray(ElementName = "自动回复集合")]
-        //public ObservableCollection<AutoResponse> Responses
-        //{
-        //    get
-        //    {
-        //        return _responses;
-        //    }
-        //    set
-        //    {
-        //        if (_responses == value)
-        //        {
-        //            return;
-        //        }
-        //        _responses = value;
-        //        Notify("Responses");
-        //    }
-        //}
         private VirsualData _data = new VirsualData();
         /// <summary>
         /// 数据位
@@ -216,8 +190,15 @@ namespace VirsualDevice
         }
         private void btnSend_Click(object sender, RoutedEventArgs e)
         {
-            if (_continue)
-                Write(this.txtSend.Text);
+            try
+            {
+                if (_continue)
+                    Write(this.txtSend.Text);
+            }
+            catch (Exception ex)
+            {
+                LogMessage(ex.Message, FlowDirection.RightToLeft,Brushes.Yellow);
+            }
         }
         private void btnCommand_Click(object sender, RoutedEventArgs e)
         {
@@ -231,24 +212,24 @@ namespace VirsualDevice
             }
             catch (Exception ex)
             {
-                LogMessage(ex.Message, FlowDirection.RightToLeft);
+                LogMessage(ex.Message, FlowDirection.RightToLeft,Brushes.Yellow);
             }
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(txtContent.Text) || string.IsNullOrEmpty(txtCommand.Text))
+            if (string.IsNullOrEmpty(txtContent.Text) || string.IsNullOrEmpty(txtSend.Text))
             {
                 MessageBox.Show("功能名称|命令均不能为空");
                 return;
             }
-            if (Data.Funcs.FirstOrDefault(f => f.Content == txtContent.Text && f.Command == txtCommand.Text) != null)
+            if (Data.Funcs.FirstOrDefault(f => f.Content == txtContent.Text && f.Command == txtSend.Text) != null)
             {
                 MessageBox.Show("已存在相同的项");
                 return;
             }
-            Data.Funcs.Add(new Function() { Content = txtContent.Text, Command = txtCommand.Text });
-            txtCommand.Text = "";
+            Data.Funcs.Add(new Function() { Content = txtContent.Text, Command = txtSend.Text });
+            txtSend.Text = "";
             txtContent.Text = "";
         }
 
@@ -296,15 +277,15 @@ namespace VirsualDevice
         {
             _readThread = new Thread(Read);
             _serialPort = new SerialPort((string)cboPortNames.SelectedItem, BaudRate, (Parity)cboParities.SelectedItem, DataBits, (StopBits)cboStopBites.SelectedItem);
-            _serialPort.Encoding = (Encoding)cboEncodings.SelectedItem;
-            _serialPort.WriteTimeout = 500;
-            _serialPort.ReadTimeout = 500;
+            _serialPort.Encoding = Encoding.ASCII;
+            _serialPort.WriteTimeout = 1000;
+            _serialPort.ReadTimeout = 1000;
             _serialPort.Open();
             _readThread.Start();
 
             _continue = true;
             btnClose.IsEnabled = true;
-            LogMessage("串口已启动", FlowDirection.RightToLeft);
+            LogMessage("串口已启动", FlowDirection.RightToLeft,Brushes.LightGreen);
             MessageBox.Show("串口已启动。");
         }
         /// <summary>
@@ -324,7 +305,7 @@ namespace VirsualDevice
                 _serialPort.Close();
 
                 btnOpen.IsEnabled = true;
-                LogMessage("串口已关闭", FlowDirection.RightToLeft);
+                LogMessage("串口已关闭", FlowDirection.RightToLeft,Brushes.Pink);
                 MessageBox.Show("串口已关闭");
             }
             catch (Exception ex)
@@ -342,10 +323,28 @@ namespace VirsualDevice
             {
                 try
                 {
-                    string message = _serialPort.ReadLine();
+                    string message = string.Empty;
+                    if (EncodingIndex == 1)
+                    {
+                        byte[] messes = new byte[1024];
+                        int len = _serialPort.Read(messes, 0, 1024);
+                        while (_serialPort.BytesToRead > 0)
+                        {
+                            len += _serialPort.Read(messes, len, 1024 - len);
+                        }
+                        for (int i = 0; i < len; i++)
+                        {
+                            message += messes[i].ToString("X2") + " ";
+                        }
+                        message = message.Trim();
+                    }
+                    else
+                    {
+                        message = _serialPort.ReadLine();
+                    }
                     Dispatcher.Invoke(new Action(() =>
                     {
-                        LogMessage(message, FlowDirection.LeftToRight);
+                        LogMessage(message, FlowDirection.LeftToRight,Brushes.LightBlue);
                         AutoResponseMessage(message);
                     }));
 
@@ -359,15 +358,55 @@ namespace VirsualDevice
         /// <param name="mess"></param>
         public void Write(string mess)
         {
+            if (!string.IsNullOrEmpty(mess) && mess.Contains(';'))
+            {
+                string[] messes = mess.Split(';');
+                int tick = Convert.ToInt32(messes[messes.Length - 1]);
+                DispatcherTimer timer = new DispatcherTimer();
+                timer.Interval = new TimeSpan(0, 0, 0, 0, tick);
+                int i = 0;
+                Send(messes[i]);
+                timer.Tick += delegate
+                {
+                    i++;
+                    if (i < messes.Length - 1)
+                        Send(messes[i]);
+                    else
+                        timer.Stop();
+                };
+                timer.Start();
+
+            }
+            else
+            {
+                Send(mess);
+            }
+        }
+
+        private void Send(string mess)
+        {
             try
             {
-                _serialPort.WriteLine(mess);
-                LogMessage(mess, FlowDirection.RightToLeft);
+                if (cboEncodings.Text == "BYTE")
+                {
+                    string[] messes = mess.Trim().Split(' ');
+                    byte[] mes = new byte[messes.Length];
+                    for (int i = 0; i < messes.Length; i++)
+                    {
+                        mes[i] = Convert.ToByte(messes[i], 16);
+                    }
+                    _serialPort.Write(mes, 0, mes.Length);
+                }
+                else
+                {
+                    _serialPort.WriteLine(mess);
+                }
+                LogMessage(mess, FlowDirection.RightToLeft, Brushes.LightGreen);
 
             }
             catch (TimeoutException ex)
             {
-                LogMessage(ex.Message, FlowDirection.RightToLeft);
+                LogMessage(ex.Message, FlowDirection.RightToLeft, Brushes.Yellow);
             }
         }
         /// <summary>
@@ -375,11 +414,14 @@ namespace VirsualDevice
         /// </summary>
         /// <param name="message"></param>
         /// <param name="direction"></param>
-        private void LogMessage(string message, FlowDirection direction)
+        private void LogMessage(string message, FlowDirection direction, SolidColorBrush brush)
         {
             Paragraph paragraph = new Paragraph();
             paragraph.FlowDirection = direction;
             LogControl con = new LogControl();
+            con.FlowDirection = FlowDirection.LeftToRight;
+            con.Background = brush;
+            con.Time = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss");
             con.Message = message;
             con.Template = (ControlTemplate)this.Resources["LogTemplate"];
             paragraph.Inlines.Add(con);
@@ -392,10 +434,17 @@ namespace VirsualDevice
         /// <param name="message"></param>
         private void AutoResponseMessage(string message)
         {
-            AutoResponse res = Data.Responses.FirstOrDefault(a => a.Ask == message);
-            if (res != null)
+            try
             {
-                Write(res.Answer);
+                AutoResponse res = Data.Responses.FirstOrDefault(a => a.Ask == message);
+                if (res != null)
+                {
+                    Write(res.Answer);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogMessage(ex.Message, FlowDirection.RightToLeft, Brushes.Yellow);
             }
         }
 

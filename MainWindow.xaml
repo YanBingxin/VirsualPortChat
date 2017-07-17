@@ -21,7 +21,7 @@
                 </Border>
             </ControlTemplate>
             <ControlTemplate x:Key="LogTemplate" TargetType="{x:Type local:LogControl}">
-                <Border x:Name="Chrome" CornerRadius="3" BorderBrush="{TemplateBinding BorderBrush}" Background="White" SnapsToDevicePixels="True">
+                <Border x:Name="Chrome" CornerRadius="3" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition/>
@@ -49,8 +49,8 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="326*"/>
-            <ColumnDefinition Width="195*"/>
-            <ColumnDefinition Width="271*"/>
+            <ColumnDefinition Width="55*"/>
+            <ColumnDefinition Width="415*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="1.47*"/>
@@ -128,7 +128,7 @@
                 <TextBlock Text="波特率值:"/>
                 <TextBox Text="{Binding BaudRate}"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}" Template="{DynamicResource TextBoxControlTemplate}"/>
                 <TextBlock Text="编码格式:"/>
-                <ComboBox x:Name="cboEncodings" ItemsSource="{Binding Encodings}" DisplayMemberPath="BodyName" SelectedIndex="0"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}">
+                <ComboBox x:Name="cboEncodings" ItemsSource="{Binding Encodings}" SelectedIndex="{Binding EncodingIndex}"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}">
 
                 </ComboBox>
 
@@ -225,9 +225,16 @@
                     </ItemsControl>
                 </ScrollViewer>
 
-                <Border Grid.Row="1" Grid.ColumnSpan="4" CornerRadius="2" BorderBrush="DimGray" BorderThickness="1" Padding="1">
-                    <UniformGrid Columns="7" >
-                        <UniformGrid.Resources>
+                <Border Grid.Row="1" Grid.ColumnSpan="4" CornerRadius="2,2,0,0" Grid.RowSpan="1" BorderBrush="DimGray" BorderThickness="1,1,1,0" Padding="1">
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.Resources>
                             <Style TargetType="TextBlock">
                                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -236,12 +243,10 @@
                                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
                                 <Setter Property="HorizontalAlignment" Value="Stretch"/>
                             </Style>
-                        </UniformGrid.Resources>
-                        <TextBlock Text="功能名称:"/>
-                        <TextBox x:Name="txtContent" Template="{DynamicResource TextBoxControlTemplate}"/>
-                        <TextBlock Text="命令:"/>
-                        <TextBox x:Name="txtCommand" Template="{DynamicResource TextBoxControlTemplate}"/>
-                        <Button Content="添加" x:Name="btnAdd" Click="btnAdd_Click">
+                        </Grid.Resources>
+                        <TextBlock Text="功能名称:" Grid.Column="0"/>
+                        <TextBox x:Name="txtContent" Grid.Column="1" Margin="0,0,2,0" HorizontalAlignment="Stretch" Template="{DynamicResource TextBoxControlTemplate}"/>
+                        <Button Content="添加" x:Name="btnAdd" Click="btnAdd_Click" Grid.Column="2">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Style.Triggers>
@@ -255,7 +260,7 @@
                                 </Style>
                             </Button.Style>
                         </Button>
-                        <ToggleButton Content="编辑" x:Name="btnEdit">
+                        <ToggleButton Content="编辑" x:Name="btnEdit" Grid.Column="3">
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
                                     <Style.Triggers>
@@ -266,7 +271,7 @@
                                 </Style>
                             </ToggleButton.Style>
                         </ToggleButton>
-                        <ToggleButton Content="删除" x:Name="btnDel">
+                        <ToggleButton Content="删除" x:Name="btnDel" Grid.Column="4">
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
                                     <Style.Triggers>
@@ -277,10 +282,23 @@
                                 </Style>
                             </ToggleButton.Style>
                         </ToggleButton>
-                    </UniformGrid>
+                    </Grid>
                 </Border>
-                <TextBox x:Name="txtSend" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Template="{DynamicResource TextBoxControlTemplate}"/>
-                <Button x:Name="btnSend" Content="发送" Grid.Row="2" Grid.Column="3" Click="btnSend_Click" IsEnabled="{Binding IsEnabled,ElementName=btnClose}"/>
+                <Border Grid.Row="2" Grid.ColumnSpan="4" CornerRadius="0,0,2,2" Grid.RowSpan="1" BorderBrush="DimGray" BorderThickness="1,0,1,1" Padding="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="操作命令:" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBox x:Name="txtSend" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.Column="1" Template="{DynamicResource TextBoxControlTemplate}" Margin="0,0,2,0"/>
+
+                        <Button x:Name="btnSend" Content="发送" Click="btnSend_Click" Grid.Column="2" IsEnabled="{Binding IsEnabled,ElementName=btnClose}" Grid.ColumnSpan="3"/>
+                    </Grid>
+                </Border>
             </Grid>
         </GroupBox>
     </Grid>

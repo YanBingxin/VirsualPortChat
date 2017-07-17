@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Administrator\Desktop\VirsualDevice\obj\Debug\
+D:\SRC\1.0\虚拟串口通讯工具\VirsualDevice\obj\Debug\
 VirsualDevice
 none
 false
 DEBUG;TRACE
-C:\Users\Administrator\Desktop\VirsualDevice\App.xaml
+D:\SRC\1.0\虚拟串口通讯工具\VirsualDevice\App.xaml
 21227631594
 
 11-782024819
 13976485994
 MainWindow.xaml;VirsualStyle.xaml;
 
-True
+False
 
