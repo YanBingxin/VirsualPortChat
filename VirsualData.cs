@@ -50,5 +50,26 @@ namespace VirsualDevice
                 _responses = value;
             }
         }
+
+
+        /// <summary>
+        /// 端口参数
+        /// </summary>
+        private PortPara _portPara = new PortPara();
+        /// <summary>
+        /// 获取或设置端口参数
+        /// </summary>
+        public PortPara PortPara
+        {
+            get
+            {
+                return _portPara;
+            }
+            set
+            {
+                _portPara = value;
+            }
+        }
+
     }
 }

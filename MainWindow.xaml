@@ -124,21 +124,21 @@
                     </Style>
                 </UniformGrid.Resources>
                 <TextBlock Text="串口名称:"/>
-                <ComboBox x:Name="cboPortNames" ItemsSource="{Binding PortNames}" SelectedIndex="0" IsEnabled="{Binding IsEnabled,ElementName=btnOpen}"/>
+                <ComboBox x:Name="cboPortNames" ItemsSource="{Binding PortNames}" SelectedValue="{Binding Data.PortPara.PortIndex}" IsEnabled="{Binding IsEnabled,ElementName=btnOpen}"/>
                 <TextBlock Text="波特率值:"/>
-                <TextBox Text="{Binding BaudRate}"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}" Template="{DynamicResource TextBoxControlTemplate}"/>
+                <TextBox Text="{Binding Data.PortPara.BaudRate,UpdateSourceTrigger=PropertyChanged}"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}" Template="{DynamicResource TextBoxControlTemplate}"/>
                 <TextBlock Text="编码格式:"/>
-                <ComboBox x:Name="cboEncodings" ItemsSource="{Binding Encodings}" SelectedIndex="{Binding EncodingIndex}"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}">
+                <ComboBox x:Name="cboEncodings" ItemsSource="{Binding Encodings}" SelectedValue="{Binding Data.PortPara.EncodingIndex}"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}">
 
                 </ComboBox>
 
                 <TextBlock Text="奇偶校验:"/>
-                <ComboBox x:Name="cboParities" ItemsSource="{Binding Parities}" SelectedIndex="2"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}">
+                <ComboBox x:Name="cboParities" ItemsSource="{Binding Parities}" SelectedIndex="{Binding Data.PortPara.ParityIndex}"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}">
                 </ComboBox>
                 <TextBlock Text="数据位值:"/>
-                <TextBox Text="{Binding DataBits}"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}" Template="{DynamicResource TextBoxControlTemplate}"/>
+                <TextBox Text="{Binding Data.PortPara.DataBits,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}" Template="{DynamicResource TextBoxControlTemplate}"/>
                 <TextBlock Text="停止位值:"/>
-                <ComboBox x:Name="cboStopBites" ItemsSource="{Binding StopBitses}" SelectedIndex="1"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}"/>
+                <ComboBox x:Name="cboStopBites" ItemsSource="{Binding StopBitses}" SelectedIndex="{Binding Data.PortPara.StopBitsIndex}"  IsEnabled="{Binding IsEnabled,ElementName=btnOpen}"/>
 
                 <Button x:Name="btnOpen" Content="启动端口" Click="Button_Click"/>
                 <Button x:Name="btnClose" Content="停止端口" IsEnabled="False" Click="btnClose_Click"/>

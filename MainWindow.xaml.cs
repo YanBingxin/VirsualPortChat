@@ -30,69 +30,14 @@ namespace VirsualDevice
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         #region 字段
-        static bool _continue;
-        static SerialPort _serialPort;
-        static Thread _readThread;
+        bool _continue;
+        SerialPort _serialPort;
+        Thread _readThread;
         #endregion
 
         #region 属性
 
-        /// <summary>
-        /// 属性
-        /// </summary>
-        private int _encodingIndex = 0;
-        /// <summary>
-        /// 获取或设置属性
-        /// </summary>
-        public int EncodingIndex
-        {
-            get
-            {
-                return _encodingIndex;
-            }
-            set
-            {
-                if (_encodingIndex == value)
-                {
-                    return;
-                }
-                _encodingIndex = value;
-                Notify("EncodingIndex");
-            }
-        }
 
-        private int _baudRate = 9600;
-        /// <summary>
-        /// 波特率
-        /// </summary>
-        public int BaudRate
-        {
-            get
-            {
-                return _baudRate;
-            }
-            set
-            {
-                _baudRate = value;
-                Notify("BaudRate");
-            }
-        }
-        private int _dataBits = 8;
-        /// <summary>
-        /// 数据位
-        /// </summary>
-        public int DataBits
-        {
-            get
-            {
-                return _dataBits;
-            }
-            set
-            {
-                _dataBits = value;
-                Notify("DataBits");
-            }
-        }
         /// <summary>
         /// 本机端口列表
         /// </summary>
@@ -197,7 +142,7 @@ namespace VirsualDevice
             }
             catch (Exception ex)
             {
-                LogMessage(ex.Message, FlowDirection.RightToLeft,Brushes.Yellow);
+                LogMessage(ex.Message, FlowDirection.RightToLeft, Brushes.Yellow);
             }
         }
         private void btnCommand_Click(object sender, RoutedEventArgs e)
@@ -212,7 +157,7 @@ namespace VirsualDevice
             }
             catch (Exception ex)
             {
-                LogMessage(ex.Message, FlowDirection.RightToLeft,Brushes.Yellow);
+                LogMessage(ex.Message, FlowDirection.RightToLeft, Brushes.Yellow);
             }
         }
 
@@ -276,7 +221,7 @@ namespace VirsualDevice
         private void OpenSerialPort()
         {
             _readThread = new Thread(Read);
-            _serialPort = new SerialPort((string)cboPortNames.SelectedItem, BaudRate, (Parity)cboParities.SelectedItem, DataBits, (StopBits)cboStopBites.SelectedItem);
+            _serialPort = new SerialPort((string)cboPortNames.SelectedItem, Data.PortPara.BaudRate, (Parity)cboParities.SelectedItem, Data.PortPara.DataBits, (StopBits)cboStopBites.SelectedItem);
             _serialPort.Encoding = Encoding.ASCII;
             _serialPort.WriteTimeout = 1000;
             _serialPort.ReadTimeout = 1000;
@@ -285,7 +230,7 @@ namespace VirsualDevice
 
             _continue = true;
             btnClose.IsEnabled = true;
-            LogMessage("串口已启动", FlowDirection.RightToLeft,Brushes.LightGreen);
+            LogMessage("串口已启动", FlowDirection.RightToLeft, Brushes.LightGreen);
             MessageBox.Show("串口已启动。");
         }
         /// <summary>
@@ -301,11 +246,14 @@ namespace VirsualDevice
             try
             {
                 _continue = false;
-                _readThread.Join();
+                if (!_readThread.Join(500))
+                {
+                    _readThread.Abort();
+                }
                 _serialPort.Close();
 
                 btnOpen.IsEnabled = true;
-                LogMessage("串口已关闭", FlowDirection.RightToLeft,Brushes.Pink);
+                LogMessage("串口已关闭", FlowDirection.RightToLeft, Brushes.Pink);
                 MessageBox.Show("串口已关闭");
             }
             catch (Exception ex)
@@ -324,7 +272,7 @@ namespace VirsualDevice
                 try
                 {
                     string message = string.Empty;
-                    if (EncodingIndex == 1)
+                    if (Data.PortPara.EncodingIndex.ToUpper() == "BYTE")
                     {
                         byte[] messes = new byte[1024];
                         int len = _serialPort.Read(messes, 0, 1024);
@@ -344,7 +292,7 @@ namespace VirsualDevice
                     }
                     Dispatcher.Invoke(new Action(() =>
                     {
-                        LogMessage(message, FlowDirection.LeftToRight,Brushes.LightBlue);
+                        LogMessage(message, FlowDirection.LeftToRight, Brushes.LightBlue);
                         AutoResponseMessage(message);
                     }));
 
@@ -426,7 +374,12 @@ namespace VirsualDevice
             con.Template = (ControlTemplate)this.Resources["LogTemplate"];
             paragraph.Inlines.Add(con);
             flLog.Blocks.Add(paragraph);
-            rchtxt.ScrollToEnd();
+            //if (!rchtxt.IsMouseOver && !ugd.IsMouseOver && this.IsMouseOver)
+            //    rchtxt.ScrollToEnd();
+            if (flLog.Blocks.Count > 7)
+            {
+                flLog.Blocks.Remove(flLog.Blocks.ToList()[0]);
+            }
         }
         /// <summary>
         /// 自动回复
@@ -436,7 +389,7 @@ namespace VirsualDevice
         {
             try
             {
-                AutoResponse res = Data.Responses.FirstOrDefault(a => a.Ask == message);
+                AutoResponse res = Data.Responses.FirstOrDefault(a => string.Compare(a.Ask, message, true) == 0);
                 if (res != null)
                 {
                     Write(res.Answer);
